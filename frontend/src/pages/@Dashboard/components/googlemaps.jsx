@@ -29,7 +29,8 @@ const MapboxComponent = () => {
       try {
         const response = await axios.get("https://agrixcubesat.azurewebsites.net/backendapi/satLocation/");
         const { coordinates } = response.data;
-        setAllCoordinates(coordinates); // Set all coordinates
+        console.log("data",coordinates);
+        setAllCoordinates(coordinates); 
       } catch (error) {
         console.error("Error fetching all coordinates:", error);
       }
@@ -41,7 +42,7 @@ const MapboxComponent = () => {
     const intervalId = setInterval(() => {
       fetchCoordinates();
       fetchAllCoordinates();
-    }, 60000); // Fetch data every minute
+    }, 60000); 
 
     return () => clearInterval(intervalId);
   }, []);
@@ -53,7 +54,7 @@ const MapboxComponent = () => {
   }, [coordinates, allCoordinates]);
 
   const initMap = () => {
-    if (map) return; // Avoid re-initializing map if it's already initialized
+    if (map) return; 
 
     const mapInstance = new mapboxgl.Map({
       container: "map",
@@ -78,7 +79,7 @@ const MapboxComponent = () => {
 
       setGroundStationMarker(marker);
 
-      // Only create the latest marker from the coordinates
+      
       const latestCoord = allCoordinates[allCoordinates.length - 1];
       const latestMarkerElement = document.createElement("div");
       latestMarkerElement.style.backgroundImage = "url('/cubesat.jpg')";
@@ -92,12 +93,12 @@ const MapboxComponent = () => {
 
       setLatestMarker(latestMarkerInstance);
 
-      // Create a line connecting all coordinates (green path)
+      
       const line = turf.lineString(
         allCoordinates.map(coord => [coord.longitude, coord.latitude])
       );
 
-      // Add the line to the map
+      
       mapInstance.addSource("line-source", { type: "geojson", data: line });
       mapInstance.addLayer({
         id: "line-layer",
@@ -129,7 +130,7 @@ const MapboxComponent = () => {
         }
       });
 
-      // Adjust the map to fit all coordinates
+      
       const bounds = new mapboxgl.LngLatBounds();
       allCoordinates.forEach(coord => bounds.extend([coord.longitude, coord.latitude]));
       mapInstance.fitBounds(bounds, { padding: 50 });
@@ -140,15 +141,15 @@ const MapboxComponent = () => {
     if (latestMarker && allCoordinates.length > 0) {
       const latestCoordinate = allCoordinates[allCoordinates.length - 1];
 
-      // Update the latest marker to the latest coordinate
+      
       latestMarker.setLngLat([latestCoordinate.longitude, latestCoordinate.latitude]);
 
-      // Update the line with the new coordinate
+      
       const line = turf.lineString(
         allCoordinates.map(coord => [coord.longitude, coord.latitude])
       );
 
-      // Update the existing line or add a new one
+      
       if (map.getSource("line-source")) {
         map.getSource("line-source").setData(line);
       } else {
@@ -158,18 +159,18 @@ const MapboxComponent = () => {
           type: "line",
           source: "line-source",
           paint: {
-            "line-color": "#00FF00", // Green color
+            "line-color": "#00FF00", 
             "line-width": 3,
           },
         });
       }
 
-      // Adjust the map to fit all coordinates
+      
       const bounds = new mapboxgl.LngLatBounds();
       allCoordinates.forEach(coord => bounds.extend([coord.longitude, coord.latitude]));
       map.fitBounds(bounds, { padding: 50 });
     }
-  }, [allCoordinates]); // Re-run whenever coordinates change
+  }, [allCoordinates]);
 
   if (!coordinates.latitude || !coordinates.longitude || allCoordinates.length === 0) {
     return <div>Loading map...</div>;

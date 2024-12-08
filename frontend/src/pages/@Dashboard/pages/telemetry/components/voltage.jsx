@@ -37,9 +37,9 @@ const VoltageGauge = () => {
   }, []);
 
   const chartConfigs = {
-    type: "lineargauge",
-    width: "150",
-    height: "400",
+    type: "hlineargauge",
+    width: "400",
+    height: "150",
     dataFormat: "json",
     dataSource: {
       chart: {
