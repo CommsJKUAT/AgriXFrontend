@@ -11,7 +11,6 @@ import {
   Legend,
 } from "chart.js";
 
-// Register the required components for Chart.js
 ChartJS.register(
   LineElement,
   CategoryScale,
@@ -31,15 +30,13 @@ const SoilMoistureTemperatureChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Replace with your actual backend endpoint
         const response = await fetch("https://agrixcubesat.azurewebsites.net/backendapi/payload/");
         const data = await response.json();
 
-        // Process the data to get daily averages for the last 7 days
         const groupedData = {};
 
         data.forEach((item) => {
-          const date = new Date(item.created_at).toISOString().split('T')[0]; // Get only the date part
+          const date = new Date(item.created_at).toISOString().split('T')[0];
 
           if (!groupedData[date]) {
             groupedData[date] = {
@@ -54,7 +51,6 @@ const SoilMoistureTemperatureChart = () => {
           groupedData[date].humidity.push(item.humidity);
         });
 
-        // Calculate the averages for each day
         const averages = Object.keys(groupedData).map((date) => {
           const { soil_moisture, temperature, humidity } = groupedData[date];
           const avgSoilMoisture =
@@ -72,21 +68,17 @@ const SoilMoistureTemperatureChart = () => {
           };
         });
 
-        // Sort the data by date in descending order to get the last 7 days
         averages.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        // Take only the last 7 days of data
         const last7DaysData = averages.slice(0, 7);
 
-        // Update the state with the last 7 days data
         setSoilMoistureData(last7DaysData.map((item) => item.avgSoilMoisture));
         setTemperatureData(last7DaysData.map((item) => item.avgTemperature));
         setHumidityData(last7DaysData.map((item) => item.avgHumidity));
 
-        // Format the date to "dd/mm" format (without the year)
         setLabels(last7DaysData.map((item) => {
           const date = new Date(item.date);
-          return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}`; // dd/mm format
+          return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}`;
         }));
       } catch (error) {
         console.error("Error fetching sensor data:", error);
@@ -94,9 +86,8 @@ const SoilMoistureTemperatureChart = () => {
     };
 
     fetchData();
-  }, []); // Run the effect once on component mount
+  }, []);
 
-  // If data is not available yet, show loading state
   if (
     temperatureData.length === 0 ||
     humidityData.length === 0 ||
@@ -106,23 +97,23 @@ const SoilMoistureTemperatureChart = () => {
   }
 
   const data = {
-    labels: labels, // Dynamic labels based on the last 7 days
+    labels: labels,
     datasets: [
       {
         label: "Soil Moisture (%)",
-        data: soilMoistureData, // Use the daily average soil moisture data
+        data: soilMoistureData,
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
       },
       {
         label: "Soil Temperature (°C)",
-        data: temperatureData, // Use the daily average temperature data
+        data: temperatureData,
         borderColor: "rgba(255, 99, 132, 1)",
         backgroundColor: "rgba(255, 99, 132, 0.2)",
       },
       {
         label: "Soil Humidity (%)",
-        data: humidityData, // Use the daily average humidity data
+        data: humidityData,
         borderColor: "rgba(153, 102, 255, 1)",
         backgroundColor: "rgba(153, 102, 255, 0.2)",
       },
