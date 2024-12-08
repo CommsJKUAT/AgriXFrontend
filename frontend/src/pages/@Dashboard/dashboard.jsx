@@ -17,7 +17,7 @@ const Dashboard = () => {
 
     const fetchCoordinates = async () => {
       try {
-        const response = await fetch("https://agroxsat.onrender.com/backendapi/");
+        const response = await fetch("https://agrixcubesat.azurewebsites.net/backendapi/");
         if (!response.ok) throw new Error("Failed to fetch coordinates");
         const data = await response.json();
         console.log("Fetched coordinates:", data); // Log the fetched coordinates
@@ -32,7 +32,7 @@ const Dashboard = () => {
       try {
         const requestBody = JSON.stringify({ latitude: lat, longitude: lon });
         console.log("Request body:", requestBody);
-        const response = await fetch('https://agroxsat.onrender.com/backendapi/baseStation/', {
+        const response = await fetch('https://agrixcubesat.azurewebsites.net/backendapi/baseStation/', {
           method: 'POST', 
           headers: {
             'Content-Type': 'application/json', 
