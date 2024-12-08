@@ -19,18 +19,18 @@ dayjs.extend(weekOfYear);
 
 const TemperatureHumidity = () => {
   const [chartData, setChartData] = useState({
-    labels: [],
+    labels: ["Week 1", "Week 2", "Week 3"],
     datasets: [
       {
         label: "Temperature (°C)",
-        data: [],
+        data: [25, 26, 27],
         fill: false,
         borderColor: "orange",
         tension: 0.1,
       },
       {
         label: "Humidity (%)",
-        data: [],
+        data: [60, 65, 70],
         fill: false,
         borderColor: "green",
         tension: 0.1,
@@ -116,10 +116,7 @@ const TemperatureHumidity = () => {
   return (
     <div>
       <h3>Temperature and Humidity</h3>
-      <div
-        className="chart-container"
-        style={{ width: "100%", height: "400px" }}
-      >
+      <div className="chart-container" style={{ width: "100%", height: "400px" }}>
         <Line id="temp" data={chartData} options={options} />
       </div>
     </div>

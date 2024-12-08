@@ -14,15 +14,17 @@ ChartJS.register(
   Legend,
   RadialLinearScale  
 );
+
 dayjs.extend(weekOfYear);
 
 const SoilMoisture = () => {
+  // Default chart data
   const [chartData, setChartData] = useState({
-    labels: [],
+    labels: ["Week 1", "Week 2", "Week 3"],  // Default weeks
     datasets: [
       {
         label: "Soil Moisture (%)",
-        data: [],
+        data: [50, 50, 50],  // Default soil moisture values
         backgroundColor: "#3ea8f5",
       },
     ],
@@ -94,10 +96,7 @@ const SoilMoisture = () => {
   return (
     <div>
       <h3>Soil Moisture</h3>
-      <div
-        className="chart-container"
-        style={{ width: "100%", height: "400px" }}
-      >
+      <div className="chart-container" style={{ width: "100%", height: "400px" }}>
         <Bar id="soil" data={chartData} options={options} />
       </div>
     </div>

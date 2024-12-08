@@ -7,8 +7,7 @@ import ReactFC from "react-fusioncharts";
 ReactFC.fcRoot(FusionCharts, Widgets, FusionTheme);
 
 const PressureGauge = () => {
-  const [pressure, setPressure] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [pressure, setPressure] = useState(0); // Default value will be 0
   const [error, setError] = useState(null);
 
   const fetchPressure = async () => {
@@ -18,18 +17,16 @@ const PressureGauge = () => {
         throw new Error("Failed to fetch pressure data");
       }
       const data = await response.json();
-      setPressure(parseFloat(data.pressure));
-      setLoading(false);
+      setPressure(parseFloat(data.pressure)); // Update pressure value once fetched
     } catch (err) {
-      setError(err.message);
-      setLoading(false);
+      setError(err.message); // Capture error if fetch fails
     }
   };
 
   useEffect(() => {
-    fetchPressure();
-    const intervalId = setInterval(fetchPressure, 5000);
-    return () => clearInterval(intervalId);
+    fetchPressure(); // Fetch data when component mounts
+    const intervalId = setInterval(fetchPressure, 5000); // Fetch data every 5 seconds
+    return () => clearInterval(intervalId); // Cleanup interval on unmount
   }, []);
 
   const chartConfigs = {
@@ -71,7 +68,7 @@ const PressureGauge = () => {
       dials: {
         dial: [
           {
-            value: pressure,
+            value: pressure, // Show the pressure (default will be 0, updated once data is fetched)
             rearExtension: "5",
           },
         ],
@@ -79,10 +76,9 @@ const PressureGauge = () => {
     },
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <div>Error: {error}</div>; // If error, show error message
 
-  return <ReactFC {...chartConfigs} />;
+  return <ReactFC {...chartConfigs} />; // Render chart with updated value
 };
 
 export default PressureGauge;

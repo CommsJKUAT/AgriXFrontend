@@ -4,7 +4,6 @@ import Widgets from "fusioncharts/fusioncharts.widgets";
 import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
 import ReactFC from "react-fusioncharts";
 
-
 ReactFC.fcRoot(FusionCharts, Widgets, FusionTheme);
 
 const IMUGauge = ({ type, imuValue }) => {
@@ -15,7 +14,7 @@ const IMUGauge = ({ type, imuValue }) => {
     dataFormat: "json",
     dataSource: {
       chart: {
-        caption: `${type} Angle`, 
+        caption: `${type} Angle`,
         lowerlimit: "-180",
         upperlimit: "180",
         numbersuffix: "°",
@@ -31,8 +30,8 @@ const IMUGauge = ({ type, imuValue }) => {
       colorRange: {
         color: [
           { minValue: "-180", maxValue: "-90", code: "#E44A00" },
-          { minValue: "-90", maxValue: "90", code: "#62B58F" }, 
-          { minValue: "90", maxValue: "180", code: "#E44A00" },  
+          { minValue: "-90", maxValue: "90", code: "#62B58F" },
+          { minValue: "90", maxValue: "180", code: "#E44A00" },
         ],
       },
       dials: {
@@ -50,43 +49,39 @@ const IMUGauge = ({ type, imuValue }) => {
 };
 
 const IMUDisplay = () => {
+  // Set default values for roll, yaw, and pitch to show initial gauge state
   const [imuData, setImuData] = useState({
     roll: 0,
     yaw: 0,
     pitch: 0,
   });
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
- 
   const fetchIMUData = async () => {
     try {
-      const response = await fetch("https://agrixcubesat.azurewebsites.net/backendapi/telemetry/"); 
+      const response = await fetch("https://agrixcubesat.azurewebsites.net/backendapi/telemetry/");
       if (!response.ok) {
         throw new Error("Failed to fetch IMU data");
       }
       const data = await response.json();
-      
+
       setImuData({
         roll: parseFloat(data.roll),
         yaw: parseFloat(data.yaw),
         pitch: parseFloat(data.pitch),
       });
-      setLoading(false);
     } catch (err) {
       setError(err.message);
-      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchIMUData();
-    const intervalId = setInterval(fetchIMUData, 5000); 
-    return () => clearInterval(intervalId); 
+    const intervalId = setInterval(fetchIMUData, 5000); // Fetch data every 5 seconds
+    return () => clearInterval(intervalId);
   }, []);
 
-  if (loading) return <div>Loading IMU Data...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <div>Error: {error}</div>; // If error, show error message
 
   return (
     <div style={{ display: "flex", justifyContent: "center", gap: "20px" }}>

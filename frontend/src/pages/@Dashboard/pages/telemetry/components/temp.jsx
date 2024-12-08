@@ -6,8 +6,8 @@ import ReactFusioncharts from "react-fusioncharts";
 charts(FusionCharts);
 
 const Temperature = () => {
+  // Set default temperature value
   const [temperature, setTemperature] = useState(140);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchTemperature = async () => {
@@ -18,18 +18,18 @@ const Temperature = () => {
       }
       const data = await response.json();
       setTemperature(parseFloat(data.sat_temp));
-      setLoading(false);
     } catch (err) {
       setError(err.message);
-      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchTemperature();
-    const intervalId = setInterval(fetchTemperature, 5000);
+    const intervalId = setInterval(fetchTemperature, 5000); // Fetch data every 5 seconds
     return () => clearInterval(intervalId);
   }, []);
+
+  if (error) return <div>Error: {error}</div>; // If error occurs, show error message
 
   const dataSource = {
     chart: {
@@ -48,9 +48,6 @@ const Temperature = () => {
     },
     value: temperature.toString(),
   };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
 
   return (
     <ReactFusioncharts

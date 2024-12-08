@@ -14,8 +14,8 @@ ChartJS.register(
 );
 
 const SmokeSensor = () => {
-  const [smokeData, setSmokeData] = useState([0, 100, 0]);
-  const [smokeLevel, setSmokeLevel] = useState(0);
+  const [smokeData, setSmokeData] = useState([50, 50, 0]); // Default value
+  const [smokeLevel, setSmokeLevel] = useState(50); // Default smoke level
 
   useEffect(() => {
     const fetchSmokeData = async () => {

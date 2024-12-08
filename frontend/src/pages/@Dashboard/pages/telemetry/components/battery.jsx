@@ -7,7 +7,7 @@ import ReactFC from "react-fusioncharts";
 ReactFC.fcRoot(FusionCharts, Widgets, FusionTheme);
 
 const BatteryGauge = () => {
-  const [level, setLevel] = useState(0);
+  const [level, setLevel] = useState(50); // Default value of 50%
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -20,7 +20,7 @@ const BatteryGauge = () => {
         throw new Error("Failed to fetch data");
       }
       const data = await response.json();
-      setLevel(parseFloat(data.batt));
+      setLevel(parseFloat(data.batt)); // Update the level with fetched data
       setLoading(false);
     } catch (error) {
       setError(error.message);
@@ -29,10 +29,10 @@ const BatteryGauge = () => {
   };
 
   useEffect(() => {
-    fetchBatteryLevel();
-    const intervalId = setInterval(fetchBatteryLevel, 5000);
+    fetchBatteryLevel(); // Initial fetch
+    const intervalId = setInterval(fetchBatteryLevel, 5000); // Periodic fetch every 5 seconds
     return () => {
-      clearInterval(intervalId);
+      clearInterval(intervalId); // Clear the interval on component unmount
     };
   }, []);
 
@@ -63,18 +63,18 @@ const BatteryGauge = () => {
         pointer: [
           {
             value: level,
-          bgColor: "#FF5733", 
-          borderColor: "#C70039",
-          borderThickness: "4", 
-          radius: "12", 
-          alpha: "80",
+            bgColor: "#FF5733",
+            borderColor: "#C70039",
+            borderThickness: "4",
+            radius: "12",
+            alpha: "80",
           },
         ],
       },
     },
   };
 
-  if (loading) return <div>Loading...</div>;
+  // Render loading text if there's an error, otherwise show the chart immediately
   if (error) return <div>Error: {error}</div>;
 
   return <ReactFC {...chartConfigs} />;

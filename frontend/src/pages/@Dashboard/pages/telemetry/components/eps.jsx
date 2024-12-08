@@ -4,12 +4,10 @@ import Widgets from "fusioncharts/fusioncharts.widgets";
 import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
 import ReactFusioncharts from "react-fusioncharts";
 
-// Attach dependencies
 ReactFusioncharts.fcRoot(FusionCharts, Widgets, FusionTheme);
 
 const EPSTemperatureGauge = () => {
-  const [temperature, setTemperature] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [temperature, setTemperature] = useState(25);
   const [error, setError] = useState(null);
 
   const fetchTemperature = async () => {
@@ -20,10 +18,8 @@ const EPSTemperatureGauge = () => {
       }
       const data = await response.json();
       setTemperature(parseFloat(data.eps_temp));
-      setLoading(false);
     } catch (err) {
       setError(err.message);
-      setLoading(false);
     }
   };
 
@@ -61,7 +57,6 @@ const EPSTemperatureGauge = () => {
     },
   };
 
-  if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return <ReactFusioncharts {...chartConfigs} />;

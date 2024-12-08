@@ -7,8 +7,8 @@ import ReactFC from "react-fusioncharts";
 ReactFC.fcRoot(FusionCharts, Widgets, FusionTheme);
 
 const VoltageGauge = () => {
+  // Set default voltage value
   const [voltage, setVoltage] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchVoltageLevel = async () => {
@@ -21,10 +21,8 @@ const VoltageGauge = () => {
       }
       const data = await response.json();
       setVoltage(parseFloat(data.voltage)); 
-      setLoading(false);
     } catch (error) {
       setError(error.message);
-      setLoading(false);
     }
   };
 
@@ -75,10 +73,9 @@ const VoltageGauge = () => {
     },
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <div>Error: {error}</div>; // Show error message if there's an error
 
-  return <ReactFC {...chartConfigs} />;
+  return <ReactFC {...chartConfigs} />; // Render the chart immediately with default voltage value
 };
 
 export default VoltageGauge;

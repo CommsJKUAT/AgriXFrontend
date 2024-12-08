@@ -19,11 +19,11 @@ dayjs.extend(weekOfYear);
 
 const SoilPH = () => {
   const [chartData, setChartData] = useState({
-    labels: [],
+    labels: ["Week 1", "Week 2", "Week 3"],
     datasets: [
       {
         label: "Soil pH Levels",
-        data: [],
+        data: [7, 7, 7],
         backgroundColor: "rgba(255, 99, 132, 0.2)",
         borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 1,
@@ -94,10 +94,7 @@ const SoilPH = () => {
   return (
     <div>
       <h3>Soil pH Level</h3>
-      <div
-        className="chart-container"
-        style={{ width: "100%", height: "400px" }}
-      >
+      <div className="chart-container" style={{ width: "100%", height: "400px" }}>
         <Radar id="ph" data={chartData} options={options} />
       </div>
     </div>
