@@ -30,7 +30,7 @@ const BatteryGauge = () => {
 
   useEffect(() => {
     fetchBatteryLevel(); // Initial fetch
-    const intervalId = setInterval(fetchBatteryLevel, 5000); // Periodic fetch every 5 seconds
+    const intervalId = setInterval(fetchBatteryLevel, 5000000); // Periodic fetch every 5 seconds
     return () => {
       clearInterval(intervalId); // Clear the interval on component unmount
     };
