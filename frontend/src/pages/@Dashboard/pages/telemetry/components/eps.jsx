@@ -25,7 +25,7 @@ const EPSTemperatureGauge = () => {
 
   useEffect(() => {
     fetchTemperature();
-    const intervalId = setInterval(fetchTemperature, 5000);
+    const intervalId = setInterval(fetchTemperature, 500000000);
     return () => clearInterval(intervalId);
   }, []);
 

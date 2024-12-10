@@ -25,7 +25,7 @@ const Temperature = () => {
 
   useEffect(() => {
     fetchTemperature();
-    const intervalId = setInterval(fetchTemperature, 5000); // Fetch data every 5 seconds
+    const intervalId = setInterval(fetchTemperature, 500000000); // Fetch data every 5 seconds
     return () => clearInterval(intervalId);
   }, []);
 

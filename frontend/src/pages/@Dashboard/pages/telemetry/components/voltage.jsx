@@ -28,7 +28,7 @@ const VoltageGauge = () => {
 
   useEffect(() => {
     fetchVoltageLevel();
-    const intervalId = setInterval(fetchVoltageLevel, 5000); 
+    const intervalId = setInterval(fetchVoltageLevel, 5000000000); 
     return () => {
       clearInterval(intervalId);
     };
