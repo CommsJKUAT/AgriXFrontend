@@ -28,7 +28,7 @@ function Register() {
 
     try {
       const response = await fetch(
-        "https://agrixcubesat.azurewebsites.net/backend/register/",
+        "https://agroxsat.onrender.com/backend/register/",
         {
           method: "POST",
           headers: {
