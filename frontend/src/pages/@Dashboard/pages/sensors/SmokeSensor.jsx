@@ -20,7 +20,7 @@ const SmokeSensor = () => {
   useEffect(() => {
     const fetchSmokeData = async () => {
       try {
-        const response = await axios.get("https://agrixcubesat.azurewebsites.net/backendapi/payload/");
+        const response = await axios.get("https://agroxsat.onrender.com/backendapi/payload/");
         const latestSmokeLevel = response.data[response.data.length - 1].smoke_level;
         setSmokeLevel(latestSmokeLevel);
 

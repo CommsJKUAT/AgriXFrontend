@@ -13,7 +13,7 @@ const CurrentGauge = () => {
   const fetchCurrentValue = async () => {
     try {
       const response = await fetch(
-        "https://agrixcubesat.azurewebsites.net/backendapi/telemetry/"
+        "https://agroxsat.onrender.com/backendapi/telemetry/"
       );
       if (!response.ok) {
         throw new Error("Failed to fetch data");

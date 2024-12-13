@@ -58,7 +58,7 @@ const Commands = () => {
 
     // API call to send command
     try {
-      const response = await fetch("https://agrixcubesat.azurewebsites.net/backendapi/command/", {
+      const response = await fetch("https://agroxsat.onrender.com/backendapi/command/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

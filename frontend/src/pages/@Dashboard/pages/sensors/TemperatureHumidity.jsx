@@ -41,7 +41,7 @@ const TemperatureHumidity = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("https://agrixcubesat.azurewebsites.net/backendapi/payload/");
+        const response = await axios.get("https://agroxsat.onrender.com/backendapi/payload/");
         const data = response.data;
 
         const groupedData = groupDataByWeek(data);

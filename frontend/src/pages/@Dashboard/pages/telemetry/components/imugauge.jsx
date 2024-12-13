@@ -59,7 +59,7 @@ const IMUDisplay = () => {
 
   const fetchIMUData = async () => {
     try {
-      const response = await fetch("https://agrixcubesat.azurewebsites.net/backendapi/telemetry/");
+      const response = await fetch("https://agroxsat.onrender.com/backendapi/telemetry/");
       if (!response.ok) {
         throw new Error("Failed to fetch IMU data");
       }

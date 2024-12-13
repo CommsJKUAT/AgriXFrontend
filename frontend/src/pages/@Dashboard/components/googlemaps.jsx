@@ -17,7 +17,7 @@ const MapboxComponent = () => {
   useEffect(() => {
     const fetchCoordinates = async () => {
       try {
-        const response = await axios.get("https://agrixcubesat.azurewebsites.net/backendapi/");
+        const response = await axios.get("https://agroxsat.onrender.com/backendapi/");
         const { latitude, longitude } = response.data;
         setCoordinates({ latitude, longitude });
       } catch (error) {
@@ -27,7 +27,7 @@ const MapboxComponent = () => {
 
     const fetchAllCoordinates = async () => {
       try {
-        const response = await axios.get("https://agrixcubesat.azurewebsites.net/backendapi/satLocation/");
+        const response = await axios.get("https://agroxsat.onrender.com/backendapi/satLocation/");
         const { coordinates } = response.data;
         console.log("data",coordinates);
         setAllCoordinates(coordinates); 

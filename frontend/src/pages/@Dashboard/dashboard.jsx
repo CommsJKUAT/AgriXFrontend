@@ -23,7 +23,7 @@ const Dashboard = () => {
 
     const fetchClimateData = async () => {
       try {
-        const response = await fetch("https://agrixcubesat.azurewebsites.net/backendapi/payload/");
+        const response = await fetch("https://agroxsat.onrender.com/backendapi/payload/");
         if (!response.ok) throw new Error("Failed to fetch climate data");
         const data = await response.json();
         const latestData = data[0];
@@ -37,7 +37,7 @@ const Dashboard = () => {
 
     const fetchCoordinates = async () => {
       try {
-        const response = await fetch("https://agrixcubesat.azurewebsites.net/backendapi/");
+        const response = await fetch("https://agroxsat.onrender.com/backendapi/");
         if (!response.ok) throw new Error("Failed to fetch coordinates");
         const data = await response.json();
         return data;
@@ -50,7 +50,7 @@ const Dashboard = () => {
     const fetchPlaceAndCountry = async (lat, lon) => {
       try {
         const requestBody = JSON.stringify({ latitude: lat, longitude: lon });
-        const response = await fetch('https://agrixcubesat.azurewebsites.net/backendapi/baseStation/', {
+        const response = await fetch('https://agroxsat.onrender.com/backendapi/baseStation/', {
           method: 'POST', 
           headers: {
             'Content-Type': 'application/json', 
