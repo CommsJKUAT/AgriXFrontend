@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 const DashboardNav = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // useNavigate for programmatic navigation
+  const navigate = useNavigate(); 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
 
