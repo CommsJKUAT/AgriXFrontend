@@ -9,7 +9,7 @@ function Nav() {
             className="rounded-xl h-10"
           />
           <span class="self-center text-xl font-semibold whitespace-nowrap text-white">
-            AgroXSAT
+            AgriX Cubesat
           </span>
         </a>
       </div>
