@@ -15,8 +15,6 @@ const Dashboard = () => {
   const [humidity, setHumidity] = useState("Loading...");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [latitude, setLatitude] = useState(""); // State for latitude input
-  const [longitude, setLongitude] = useState(""); // State for longitude input
   const [submitMessage, setSubmitMessage] = useState(""); // Message for feedback on submission
 
   const openModal = () => setIsModalOpen(true);
@@ -39,72 +37,46 @@ const Dashboard = () => {
       }
     };
 
-    const fetchCoordinates = async () => {
-      try {
-        const response = await fetch("https://agroxsat.onrender.com/backendapi/");
-        if (!response.ok) throw new Error("Failed to fetch coordinates");
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error("Error fetching coordinates:", error);
-        return null;
-      }
-    };
-
-    const fetchPlaceAndCountry = async (lat, lon) => {
-      try {
-        const requestBody = JSON.stringify({ latitude: lat, longitude: lon });
-        const response = await fetch('https://agroxsat.onrender.com/backendapi/baseStation/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: requestBody
-        });
-        if (!response.ok) throw new Error("Failed to fetch place and country");
-        const data = await response.json();
-        const { place = "Unknown Place", country = "Unknown Country" } = data.location || {};
-        setLocationData({ place, country });
-      } catch (error) {
-        console.error("Error fetching place and country:", error);
-      }
-    };
-
-    const getLocationData = async () => {
-      const coords = await fetchCoordinates();
-      if (coords) {
-        const { latitude, longitude } = coords;
-        await fetchPlaceAndCountry(latitude, longitude);
-      }
-      await fetchClimateData();
-    };
-
-    getLocationData();
-    const intervalId = setInterval(getLocationData, 60000);
+    fetchClimateData();
+    const intervalId = setInterval(fetchClimateData, 60000);
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const requestBody = JSON.stringify({ latitude, longitude });
-      const response = await fetch("https://agroxsat.onrender.com/backendapi/setGS/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+  const handleLocationSubmit = async () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+
+          try {
+            const requestBody = JSON.stringify({ latitude, longitude });
+            const response = await fetch("https://agroxsat.onrender.com/backendapi/setGS/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: requestBody,
+            });
+            if (response.ok) {
+              const data = await response.json();
+              setSubmitMessage(data.success || "Coordinates submitted successfully.");
+            } else {
+              const errorData = await response.json();
+              setSubmitMessage(errorData.error || "Failed to submit coordinates.");
+            }
+          } catch (error) {
+            console.error("Error submitting coordinates:", error);
+            setSubmitMessage("An error occurred while submitting coordinates.");
+          }
         },
-        body: requestBody,
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setSubmitMessage(data.success || "Coordinates submitted successfully.");
-      } else {
-        const errorData = await response.json();
-        setSubmitMessage(errorData.error || "Failed to submit coordinates.");
-      }
-    } catch (error) {
-      console.error("Error submitting coordinates:", error);
-      setSubmitMessage("An error occurred while submitting coordinates.");
+        (error) => {
+          console.error("Geolocation error:", error);
+          setSubmitMessage("Failed to retrieve your location.");
+        }
+      );
+    } else {
+      setSubmitMessage("Geolocation is not supported by your browser.");
     }
   };
 
@@ -153,41 +125,15 @@ const Dashboard = () => {
               </a>
             </li>
             <li>
-              <form onSubmit={handleSubmit} className="p-4 text-white">
-                <label htmlFor="latitude" className="block text-sm font-medium">
-                  Latitude
-                </label>
-                <input
-                  type="text"
-                  id="latitude"
-                  value={latitude}
-                  onChange={(e) => setLatitude(e.target.value)}
-                  className="block w-full p-2 mt-1 text-black rounded-lg"
-                  placeholder="Enter latitude"
-                  required
-                />
-                <label htmlFor="longitude" className="block mt-4 text-sm font-medium">
-                  Longitude
-                </label>
-                <input
-                  type="text"
-                  id="longitude"
-                  value={longitude}
-                  onChange={(e) => setLongitude(e.target.value)}
-                  className="block w-full p-2 mt-1 text-black rounded-lg"
-                  placeholder="Enter longitude"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="px-4 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-800"
-                >
-                  Submit Coordinates
-                </button>
-                {submitMessage && (
-                  <p className="mt-2 text-sm">{submitMessage}</p>
-                )}
-              </form>
+              <button
+                onClick={handleLocationSubmit}
+                className="px-4 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-800"
+              >
+                Use My Location
+              </button>
+              {submitMessage && (
+                <p className="mt-2 text-sm">{submitMessage}</p>
+              )}
             </li>
             <li className="bg-transparent">
               <SoilMoistureTemperatureChart />
