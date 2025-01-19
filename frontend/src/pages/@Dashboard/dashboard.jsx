@@ -13,10 +13,10 @@ const Dashboard = () => {
   const [soilMoisture, setSoilMoisture] = useState("Loading...");
   const [temperature, setTemperature] = useState("Loading...");
   const [humidity, setHumidity] = useState("Loading...");
-  const [submitMessage, setSubmitMessage] = useState(""); // Message for feedback on submission
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const [submitMessage, setSubmitMessage] = useState(""); 
+  const [isModalOpen, setIsModalOpen] = useState(false); 
   const closeModal = () => {
-    setIsModalOpen(false); // Close the modal
+    setIsModalOpen(false); 
   };
 
   const fetchClimateData = async () => {
