@@ -23,6 +23,25 @@ const Dashboard = () => {
   useEffect(() => {
     initFlowbite();
 
+    const fetchPlaceAndCountry = async (lat, lon) => {
+      try {
+        const requestBody = JSON.stringify({ latitude: lat, longitude: lon });
+        const response = await fetch('https://agroxsat.onrender.com/backendapi/baseStation/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: requestBody
+        });
+        if (!response.ok) throw new Error("Failed to fetch place and country");
+        const data = await response.json();
+        const { place = "Unknown Place", country = "Unknown Country" } = data.location || {};
+        setLocationData({ place, country });
+      } catch (error) {
+        console.error("Error fetching place and country:", error);
+      }
+    };
+    
     const fetchClimateData = async () => {
       try {
         const response = await fetch("https://agroxsat.onrender.com/backendapi/payload/");
@@ -83,7 +102,7 @@ const Dashboard = () => {
   return (
     <>
       <DashboardNav />
-      <MapboxComponent /> {/* Map is here */}
+      <MapboxComponent /> 
       <Modal isOpen={isModalOpen} closeModal={closeModal} />
 
       <aside id="logo-sidebar" className="fixed top-0 left-0 z-40 w-80 h-screen pt-16 transition-transform -translate-x-full bg-black-olive sm:translate-x-0" aria-label="Sidebar">
