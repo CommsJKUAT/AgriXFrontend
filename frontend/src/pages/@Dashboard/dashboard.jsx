@@ -15,6 +15,10 @@ const Dashboard = () => {
   const [humidity, setHumidity] = useState("Loading...");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [latitude, setLatitude] = useState(""); // State for latitude input
+  const [longitude, setLongitude] = useState(""); // State for longitude input
+  const [submitMessage, setSubmitMessage] = useState(""); // Message for feedback on submission
+
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
@@ -51,15 +55,15 @@ const Dashboard = () => {
       try {
         const requestBody = JSON.stringify({ latitude: lat, longitude: lon });
         const response = await fetch('https://agroxsat.onrender.com/backendapi/baseStation/', {
-          method: 'POST', 
+          method: 'POST',
           headers: {
-            'Content-Type': 'application/json', 
+            'Content-Type': 'application/json',
           },
           body: requestBody
         });
         if (!response.ok) throw new Error("Failed to fetch place and country");
         const data = await response.json();
-        const { place = "Unknown Place", country = "Unknown Country" } = data.location || {}; 
+        const { place = "Unknown Place", country = "Unknown Country" } = data.location || {};
         setLocationData({ place, country });
       } catch (error) {
         console.error("Error fetching place and country:", error);
@@ -69,8 +73,8 @@ const Dashboard = () => {
     const getLocationData = async () => {
       const coords = await fetchCoordinates();
       if (coords) {
-        const { latitude, longitude } = coords; 
-        await fetchPlaceAndCountry(latitude, longitude); 
+        const { latitude, longitude } = coords;
+        await fetchPlaceAndCountry(latitude, longitude);
       }
       await fetchClimateData();
     };
@@ -79,6 +83,30 @@ const Dashboard = () => {
     const intervalId = setInterval(getLocationData, 60000000);
     return () => clearInterval(intervalId);
   }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const requestBody = JSON.stringify({ latitude, longitude });
+      const response = await fetch("https://agroxsat.onrender.com/backendapi/save_gs_coordinates/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: requestBody,
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setSubmitMessage(data.success || "Coordinates submitted successfully.");
+      } else {
+        const errorData = await response.json();
+        setSubmitMessage(errorData.error || "Failed to submit coordinates.");
+      }
+    } catch (error) {
+      console.error("Error submitting coordinates:", error);
+      setSubmitMessage("An error occurred while submitting coordinates.");
+    }
+  };
 
   return (
     <>
@@ -102,9 +130,6 @@ const Dashboard = () => {
             </li>
             <li className="bg-transparent">
               <a href="#" className="flex items-center text-white p-2 rounded-lg group">
-                <svg className="w-6 h-6 text-giants-orange" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                  <path fillRule="evenodd" d="M13 3a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0V3ZM6.343 4.929A1 1 0 0 0 4.93 6.343l1.414 1.414a1 1 0 0 0 1.414-1.414L6.343 4.929Zm12.728 1.414a1 1 0 0 0-1.414-1.414l-1.414 1.414a1 1 0 0 0 1.414 1.414l1.414-1.414ZM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm-9 4a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2H3Zm16 0a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2h-2ZM7.757 17.657a1 1 0 1 0-1.414-1.414l-1.414 1.414a1 1 0 1 0 1.414 1.414l1.414-1.414Zm9.9-1.414a1 1 0 0 0-1.414 1.414l1.414 1.414a1 1 0 0 0 1.414-1.414l-1.414-1.414ZM13 19a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0v-2Z" clipRule="evenodd" />
-                </svg>
                 <div className="flex flex-col border-b w-full border-b-olive/50 py-2">
                   <span className="ms-3 font-medium">Temperatures</span>
                   <span className="ms-3 text-sm text-olive">{temperature}°C</span>
@@ -113,9 +138,6 @@ const Dashboard = () => {
             </li>
             <li className="bg-transparent">
               <a href="#" className="flex items-center text-white p-2 rounded-lg group">
-                <svg className="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                  <path fillRule="evenodd" d="M6.707 11.707a1 1 0 0 1-1.414 0l-3-3a1 1 0 1 1 1.414-1.414l2.293 2.293V6a1 1 0 1 1 2 0v5.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-3 3z" clipRule="evenodd" />
-                </svg>
                 <div className="flex flex-col py-2">
                   <span className="ms-3 font-medium">Soil Moisture</span>
                   <span className="ms-3 text-sm text-olive">{soilMoisture}%</span>
@@ -124,14 +146,48 @@ const Dashboard = () => {
             </li>
             <li>
               <a href="#" className="flex items-center text-white p-2 rounded-lg group">
-                <svg className="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                  <path fillRule="evenodd" d="M12 9a1 1 0 0 1 1 1v9h6a1 1 0 0 1 1 1V3a1 1 0 0 1-1-1h-6v9a1 1 0 0 1-1 1z" clipRule="evenodd" />
-                </svg>
                 <div className="flex flex-col py-2">
                   <span className="ms-3 font-medium">Humidity</span>
                   <span className="ms-3 text-sm text-olive">{humidity}%</span>
                 </div>
               </a>
+            </li>
+            <li>
+              <form onSubmit={handleSubmit} className="p-4 text-white">
+                <label htmlFor="latitude" className="block text-sm font-medium">
+                  Latitude
+                </label>
+                <input
+                  type="text"
+                  id="latitude"
+                  value={latitude}
+                  onChange={(e) => setLatitude(e.target.value)}
+                  className="block w-full p-2 mt-1 text-black rounded-lg"
+                  placeholder="Enter latitude"
+                  required
+                />
+                <label htmlFor="longitude" className="block mt-4 text-sm font-medium">
+                  Longitude
+                </label>
+                <input
+                  type="text"
+                  id="longitude"
+                  value={longitude}
+                  onChange={(e) => setLongitude(e.target.value)}
+                  className="block w-full p-2 mt-1 text-black rounded-lg"
+                  placeholder="Enter longitude"
+                  required
+                />
+                <button
+                  type="submit"
+                  className="px-4 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-800"
+                >
+                  Submit Coordinates
+                </button>
+                {submitMessage && (
+                  <p className="mt-2 text-sm">{submitMessage}</p>
+                )}
+              </form>
             </li>
             <li className="bg-transparent">
               <SoilMoistureTemperatureChart />

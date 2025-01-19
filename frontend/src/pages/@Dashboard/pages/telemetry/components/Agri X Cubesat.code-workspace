@@ -5,17 +5,6 @@
 		},
 		{
 			"path": "../../../../../../../../AgroXSAT"
-		},
-		{
-			"path": "../../../../../../../../Firmware-main"
-		},
-		{
-			"name": "Node2_peer",
-			"path": "../../../../../../../../arduinoGuru/Node2_peer"
-		},
-		{
-			"name": "CKLogistics",
-			"path": "../../../../../../../../arduinoGuru/CKLogistics"
 		}
 	],
 	"settings": {}
