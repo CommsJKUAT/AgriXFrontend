@@ -23,25 +23,6 @@ const Dashboard = () => {
   useEffect(() => {
     initFlowbite();
 
-    const fetchPlaceAndCountry = async (lat, lon) => {
-      try {
-        const requestBody = JSON.stringify({ latitude: lat, longitude: lon });
-        const response = await fetch('https://agroxsat.onrender.com/backendapi/baseStation/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: requestBody
-        });
-        if (!response.ok) throw new Error("Failed to fetch place and country");
-        const data = await response.json();
-        const { place = "Unknown Place", country = "Unknown Country" } = data.location || {};
-        setLocationData({ place, country });
-      } catch (error) {
-        console.error("Error fetching place and country:", error);
-      }
-    };
-    
     const fetchClimateData = async () => {
       try {
         const response = await fetch("https://agroxsat.onrender.com/backendapi/payload/");
@@ -56,10 +37,48 @@ const Dashboard = () => {
       }
     };
 
-    fetchClimateData();
-    const intervalId = setInterval(fetchClimateData, 60000);
-    return () => clearInterval(intervalId);
-  }, []);
+    const fetchCoordinates = async () => {
+      try {
+        const response = await fetch("https://agroxsat.onrender.com/backendapi/");
+        if (!response.ok) throw new Error("Failed to fetch coordinates");
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error("Error fetching coordinates:", error);
+        return null;
+      }
+    };
+
+    const fetchPlaceAndCountry = async (lat, lon) => {
+      try {
+        const requestBody = JSON.stringify({ latitude: lat, longitude: lon });
+        const response = await fetch('https://agroxsat.onrender.com/backendapi/baseStation/', {
+          method: 'POST', 
+          headers: {
+            'Content-Type': 'application/json', 
+          },
+          body: requestBody
+        });
+        if (!response.ok) throw new Error("Failed to fetch place and country");
+        const data = await response.json();
+        const { place = "Unknown Place", country = "Unknown Country" } = data.location || {}; 
+        setLocationData({ place, country });
+      } catch (error) {
+        console.error("Error fetching place and country:", error);
+      }
+    };
+
+    const getLocationData = async () => {
+      const coords = await fetchCoordinates();
+      if (coords) {
+        const { latitude, longitude } = coords; 
+        await fetchPlaceAndCountry(latitude, longitude); 
+      }
+      await fetchClimateData();
+    };
+
+    getLocationData();
+    
 
   const handleLocationSubmit = async () => {
     if (navigator.geolocation) {
@@ -97,6 +116,8 @@ const Dashboard = () => {
     } else {
       setSubmitMessage("Geolocation is not supported by your browser.");
     }
+    const intervalId = setInterval(getLocationData, 6000);
+    return () => clearInterval(intervalId);
   };
 
   return (
