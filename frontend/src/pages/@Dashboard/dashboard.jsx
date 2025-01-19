@@ -80,7 +80,7 @@ const Dashboard = () => {
     };
 
     getLocationData();
-    const intervalId = setInterval(getLocationData, 60000000);
+    const intervalId = setInterval(getLocationData, 60000);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -88,7 +88,7 @@ const Dashboard = () => {
     e.preventDefault();
     try {
       const requestBody = JSON.stringify({ latitude, longitude });
-      const response = await fetch("https://agroxsat.onrender.com/backendapi/save_gs_coordinates/", {
+      const response = await fetch("https://agroxsat.onrender.com/backendapi/setGS/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
