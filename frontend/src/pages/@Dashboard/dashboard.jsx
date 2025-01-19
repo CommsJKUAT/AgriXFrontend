@@ -14,6 +14,10 @@ const Dashboard = () => {
   const [temperature, setTemperature] = useState("Loading...");
   const [humidity, setHumidity] = useState("Loading...");
   const [submitMessage, setSubmitMessage] = useState(""); // Message for feedback on submission
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const closeModal = () => {
+    setIsModalOpen(false); // Close the modal
+  };
 
   const fetchClimateData = async () => {
     try {
@@ -114,6 +118,7 @@ const Dashboard = () => {
     const intervalId = setInterval(getLocationData, 60000);
     return () => clearInterval(intervalId);
   }, []);
+
   return (
     <>
       <DashboardNav />
