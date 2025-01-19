@@ -13,73 +13,63 @@ const Dashboard = () => {
   const [soilMoisture, setSoilMoisture] = useState("Loading...");
   const [temperature, setTemperature] = useState("Loading...");
   const [humidity, setHumidity] = useState("Loading...");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [submitMessage, setSubmitMessage] = useState(""); // Message for feedback on submission
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const fetchClimateData = async () => {
+    try {
+      const response = await fetch("https://agroxsat.onrender.com/backendapi/payload/");
+      if (!response.ok) throw new Error("Failed to fetch climate data");
+      const data = await response.json();
+      const latestData = data[0];
+      setSoilMoisture(latestData.soil_moisture);
+      setTemperature(latestData.temperature);
+      setHumidity(latestData.humidity);
+    } catch (error) {
+      console.error("Error fetching climate data:", error);
+    }
+  };
 
-  useEffect(() => {
-    initFlowbite();
+  const fetchCoordinates = async () => {
+    try {
+      const response = await fetch("https://agroxsat.onrender.com/backendapi/");
+      if (!response.ok) throw new Error("Failed to fetch coordinates");
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching coordinates:", error);
+      return null;
+    }
+  };
 
-    const fetchClimateData = async () => {
-      try {
-        const response = await fetch("https://agroxsat.onrender.com/backendapi/payload/");
-        if (!response.ok) throw new Error("Failed to fetch climate data");
-        const data = await response.json();
-        const latestData = data[0];
-        setSoilMoisture(latestData.soil_moisture);
-        setTemperature(latestData.temperature);
-        setHumidity(latestData.humidity);
-      } catch (error) {
-        console.error("Error fetching climate data:", error);
-      }
-    };
+  const fetchPlaceAndCountry = async (lat, lon) => {
+    try {
+      const requestBody = JSON.stringify({ latitude: lat, longitude: lon });
+      const response = await fetch("https://agroxsat.onrender.com/backendapi/baseStation/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: requestBody,
+      });
+      if (!response.ok) throw new Error("Failed to fetch place and country");
+      const data = await response.json();
+      const { place = "Unknown Place", country = "Unknown Country" } = data.location || {};
+      setLocationData({ place, country });
+    } catch (error) {
+      console.error("Error fetching place and country:", error);
+    }
+  };
 
-    const fetchCoordinates = async () => {
-      try {
-        const response = await fetch("https://agroxsat.onrender.com/backendapi/");
-        if (!response.ok) throw new Error("Failed to fetch coordinates");
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error("Error fetching coordinates:", error);
-        return null;
-      }
-    };
+  const getLocationData = async () => {
+    const coords = await fetchCoordinates();
+    if (coords) {
+      const { latitude, longitude } = coords;
+      await fetchPlaceAndCountry(latitude, longitude);
+    }
+    await fetchClimateData();
+  };
 
-    const fetchPlaceAndCountry = async (lat, lon) => {
-      try {
-        const requestBody = JSON.stringify({ latitude: lat, longitude: lon });
-        const response = await fetch('https://agroxsat.onrender.com/backendapi/baseStation/', {
-          method: 'POST', 
-          headers: {
-            'Content-Type': 'application/json', 
-          },
-          body: requestBody
-        });
-        if (!response.ok) throw new Error("Failed to fetch place and country");
-        const data = await response.json();
-        const { place = "Unknown Place", country = "Unknown Country" } = data.location || {}; 
-        setLocationData({ place, country });
-      } catch (error) {
-        console.error("Error fetching place and country:", error);
-      }
-    };
-
-    const getLocationData = async () => {
-      const coords = await fetchCoordinates();
-      if (coords) {
-        const { latitude, longitude } = coords; 
-        await fetchPlaceAndCountry(latitude, longitude); 
-      }
-      await fetchClimateData();
-    };
-
-    getLocationData();
-    
-
+  // Define handleLocationSubmit outside of useEffect
   const handleLocationSubmit = async () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -116,10 +106,14 @@ const Dashboard = () => {
     } else {
       setSubmitMessage("Geolocation is not supported by your browser.");
     }
-    const intervalId = setInterval(getLocationData, 6000);
-    return () => clearInterval(intervalId);
   };
 
+  useEffect(() => {
+    initFlowbite();
+    getLocationData();
+    const intervalId = setInterval(getLocationData, 60000);
+    return () => clearInterval(intervalId);
+  }, []);
   return (
     <>
       <DashboardNav />
