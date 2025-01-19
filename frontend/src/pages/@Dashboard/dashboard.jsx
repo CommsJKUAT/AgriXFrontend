@@ -60,7 +60,7 @@ const Dashboard = () => {
             });
             if (response.ok) {
               const data = await response.json();
-              setSubmitMessage(data.success || "Coordinates submitted successfully.");
+              setSubmitMessage(data.success || "Ground Station set successfully.");
             } else {
               const errorData = await response.json();
               setSubmitMessage(errorData.error || "Failed to submit coordinates.");
