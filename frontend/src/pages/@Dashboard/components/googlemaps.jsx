@@ -29,6 +29,7 @@ const MapboxComponent = () => {
       try {
         const response = await axios.get("https://agroxsat.onrender.com/backendapi/satLocation/");
         const { coordinates } = response.data;
+        console.log("data",coordinates);
         setAllCoordinates(coordinates); 
       } catch (error) {
         console.error("Error fetching all coordinates:", error);
@@ -58,83 +59,81 @@ const MapboxComponent = () => {
     const mapInstance = new mapboxgl.Map({
       container: "map",
       style: "mapbox://styles/mapbox/streets-v11",
-      center: [coordinates.longitude || 0, coordinates.latitude || 0], // Default center if coordinates are not available
-      zoom: coordinates.latitude && coordinates.longitude ? 13 : 2, // Default zoom if coordinates are not available
+      center: [coordinates.longitude, coordinates.latitude],
+      zoom: 13,
     });
 
     setMap(mapInstance);
 
     mapInstance.on("load", () => {
-      if (coordinates.latitude && coordinates.longitude) {
-        // Add the ground station marker
-        const groundStationMarkerElement = document.createElement("div");
-        groundStationMarkerElement.style.backgroundImage = "url('/GSimage.jpg')";
-        groundStationMarkerElement.style.width = "30px";
-        groundStationMarkerElement.style.height = "30px";
-        groundStationMarkerElement.style.backgroundSize = "contain";
+      // Add the ground station marker
+      const groundStationMarkerElement = document.createElement("div");
+      groundStationMarkerElement.style.backgroundImage = "url('/GSimage.jpg')";
+      groundStationMarkerElement.style.width = "30px";
+      groundStationMarkerElement.style.height = "30px";
+      groundStationMarkerElement.style.backgroundSize = "contain";
 
-        const marker = new mapboxgl.Marker(groundStationMarkerElement)
-          .setLngLat([coordinates.longitude, coordinates.latitude])
-          .addTo(mapInstance);
+      const marker = new mapboxgl.Marker(groundStationMarkerElement)
+        .setLngLat([coordinates.longitude, coordinates.latitude])
+        .addTo(mapInstance);
 
-        setGroundStationMarker(marker);
-      }
+      setGroundStationMarker(marker);
 
-      if (allCoordinates.length > 0) {
-        const latestCoord = allCoordinates[allCoordinates.length - 1];
-        const latestMarkerElement = document.createElement("div");
-        latestMarkerElement.style.backgroundImage = "url('/cubesat.jpg')";
-        latestMarkerElement.style.width = "30px";
-        latestMarkerElement.style.height = "30px";
-        latestMarkerElement.style.backgroundSize = "contain";
+      
+      const latestCoord = allCoordinates[allCoordinates.length - 1];
+      const latestMarkerElement = document.createElement("div");
+      latestMarkerElement.style.backgroundImage = "url('/cubesat.jpg')";
+      latestMarkerElement.style.width = "30px";
+      latestMarkerElement.style.height = "30px";
+      latestMarkerElement.style.backgroundSize = "contain";
 
-        const latestMarkerInstance = new mapboxgl.Marker(latestMarkerElement)
-          .setLngLat([latestCoord.longitude, latestCoord.latitude])
-          .addTo(mapInstance);
+      const latestMarkerInstance = new mapboxgl.Marker(latestMarkerElement)
+        .setLngLat([latestCoord.longitude, latestCoord.latitude])
+        .addTo(mapInstance);
 
-        setLatestMarker(latestMarkerInstance);
+      setLatestMarker(latestMarkerInstance);
 
-        const line = turf.lineString(
-          allCoordinates.map(coord => [coord.longitude, coord.latitude])
-        );
+      
+      const line = turf.lineString(
+        allCoordinates.map(coord => [coord.longitude, coord.latitude])
+      );
 
-        mapInstance.addSource("line-source", { type: "geojson", data: line });
-        mapInstance.addLayer({
-          id: "line-layer",
-          type: "line",
-          source: "line-source",
-          paint: {
-            "line-color": "#00FF00", // Green color
-            "line-width": 3,
-          },
-        });
+      
+      mapInstance.addSource("line-source", { type: "geojson", data: line });
+      mapInstance.addLayer({
+        id: "line-layer",
+        type: "line",
+        source: "line-source",
+        paint: {
+          "line-color": "#00FF00", // Green color
+          "line-width": 3,
+        },
+      });
 
-        // Create a green circle around the ground station
-        if (coordinates.latitude && coordinates.longitude) {
-          const groundStationPoint = turf.point([coordinates.longitude, coordinates.latitude]);
-          const circle = turf.circle(groundStationPoint, distance, { units: 'meters' });
+      // Create a green circle around the ground station
+      const groundStationPoint = turf.point([coordinates.longitude, coordinates.latitude]);
+      const circle = turf.circle(groundStationPoint, distance, { units: 'meters' });
 
-          // Add the circle to the map
-          mapInstance.addSource("circle-source", {
-            type: "geojson",
-            data: circle
-          });
+      // Add the circle to the map
+      mapInstance.addSource("circle-source", {
+        type: "geojson",
+        data: circle
+      });
 
-          mapInstance.addLayer({
-            id: "circle-layer",
-            type: "fill",
-            source: "circle-source",
-            paint: {
-              "fill-color": "#00FF00",
-              "fill-opacity": 0.3
-            }
-          });
+      mapInstance.addLayer({
+        id: "circle-layer",
+        type: "fill",
+        source: "circle-source",
+        paint: {
+          "fill-color": "#00FF00",
+          "fill-opacity": 0.3
         }
+      });
 
-        const bounds = new mapboxgl.LngLatBounds();
-        allCoordinates.forEach(coord => bounds.extend([coord.longitude, coord.latitude]));
-        mapInstance.fitBounds(bounds, { padding: 50 });
-      }
+      
+      const bounds = new mapboxgl.LngLatBounds();
+      allCoordinates.forEach(coord => bounds.extend([coord.longitude, coord.latitude]));
+      mapInstance.fitBounds(bounds, { padding: 50 });
     });
   };
 
@@ -142,12 +141,15 @@ const MapboxComponent = () => {
     if (latestMarker && allCoordinates.length > 0) {
       const latestCoordinate = allCoordinates[allCoordinates.length - 1];
 
+      
       latestMarker.setLngLat([latestCoordinate.longitude, latestCoordinate.latitude]);
 
+      
       const line = turf.lineString(
         allCoordinates.map(coord => [coord.longitude, coord.latitude])
       );
 
+      
       if (map.getSource("line-source")) {
         map.getSource("line-source").setData(line);
       } else {
@@ -163,11 +165,16 @@ const MapboxComponent = () => {
         });
       }
 
+      
       const bounds = new mapboxgl.LngLatBounds();
       allCoordinates.forEach(coord => bounds.extend([coord.longitude, coord.latitude]));
       map.fitBounds(bounds, { padding: 50 });
     }
   }, [allCoordinates]);
+
+  if (!coordinates.latitude || !coordinates.longitude || allCoordinates.length === 0) {
+    return <div>Loading map...</div>;
+  }
 
   return (
     <div id="map" style={{ width: "100%", height: "100vh" }} />
