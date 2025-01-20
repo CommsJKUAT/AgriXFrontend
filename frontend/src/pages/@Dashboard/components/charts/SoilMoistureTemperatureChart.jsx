@@ -30,7 +30,7 @@ const SoilMoistureTemperatureChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("https://agrixcubesat.azurewebsites.net/backendapi/payload/");
+        const response = await fetch("https://agroxsat.onrender.com/backendapi//");
         const data = await response.json();
 
         const groupedData = {};
