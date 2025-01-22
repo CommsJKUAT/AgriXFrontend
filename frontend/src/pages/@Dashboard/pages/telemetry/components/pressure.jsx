@@ -25,7 +25,7 @@ const PressureGauge = () => {
 
   useEffect(() => {
     fetchPressure(); // Fetch data when component mounts
-    const intervalId = setInterval(fetchPressure, 5000000000); // Fetch data every 5 seconds
+    const intervalId = setInterval(fetchPressure, 5000); // Fetch data every 5 seconds
     return () => clearInterval(intervalId); // Cleanup interval on unmount
   }, []);
 

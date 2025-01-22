@@ -77,7 +77,7 @@ const IMUDisplay = () => {
 
   useEffect(() => {
     fetchIMUData();
-    const intervalId = setInterval(fetchIMUData, 50000000); // Fetch data every 5 seconds
+    const intervalId = setInterval(fetchIMUData, 5000); // Fetch data every 5 seconds
     return () => clearInterval(intervalId);
   }, []);
 

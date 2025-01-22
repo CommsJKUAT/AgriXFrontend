@@ -27,7 +27,7 @@ const CurrentGauge = () => {
 
   useEffect(() => {
     fetchCurrentValue();
-    const intervalId = setInterval(fetchCurrentValue, 5000000);
+    const intervalId = setInterval(fetchCurrentValue, 5000);
     return () => {
       clearInterval(intervalId);
     };

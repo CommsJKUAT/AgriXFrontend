@@ -3,7 +3,16 @@ import { Bar } from "react-chartjs-2";
 import axios from "axios";
 import dayjs from "dayjs";
 import weekOfYear from "dayjs/plugin/weekOfYear";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, RadialLinearScale } from 'chart.js';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import zoomPlugin from "chartjs-plugin-zoom"; // Import the zoom plugin
 
 ChartJS.register(
   CategoryScale,
@@ -12,19 +21,18 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  RadialLinearScale  
+  zoomPlugin // Register the zoom plugin
 );
 
 dayjs.extend(weekOfYear);
 
 const SoilMoisture = () => {
-  // Default chart data
   const [chartData, setChartData] = useState({
-    labels: ["Week 1", "Week 2", "Week 3"],  // Default weeks
+    labels: [],
     datasets: [
       {
         label: "Soil Moisture (%)",
-        data: [50, 50, 50],  // Default soil moisture values
+        data: [],
         backgroundColor: "#3ea8f5",
       },
     ],
@@ -36,15 +44,19 @@ const SoilMoisture = () => {
         const response = await axios.get("https://agroxsat.onrender.com/backendapi/payload/");
         const data = response.data;
 
-        const groupedData = groupDataByWeek(data);
-        const { weeks, soilMoistureData } = processData(groupedData);
+        const recentData = data.slice(-25); // Limit to the most recent 25 points
+
+        const labels = recentData.map((item) =>
+          dayjs(item.created_at).format("HH:mm") // Format to show only the time
+        );
+        const soilMoistureValues = recentData.map((item) => item.soil_moisture);
 
         setChartData({
-          labels: weeks,
+          labels,
           datasets: [
             {
               label: "Soil Moisture (%)",
-              data: soilMoistureData,
+              data: soilMoistureValues,
               backgroundColor: "#3ea8f5",
             },
           ],
@@ -57,38 +69,39 @@ const SoilMoisture = () => {
     fetchData();
   }, []);
 
-  const groupDataByWeek = (data) => {
-    return data.reduce((acc, item) => {
-      const weekNumber = dayjs(item.created_at).week();
-      if (!acc[weekNumber]) {
-        acc[weekNumber] = [];
-      }
-      acc[weekNumber].push(item);
-      return acc;
-    }, {});
-  };
-
-  const processData = (groupedData) => {
-    const weeks = [];
-    const soilMoistureData = [];
-
-    for (let week in groupedData) {
-      weeks.push(`Week ${week}`);
-      const weekData = groupedData[week];
-
-      const averageSoilMoisture = weekData.reduce((sum, item) => sum + item.soil_moisture, 0) / weekData.length;
-
-      soilMoistureData.push(averageSoilMoisture);
-    }
-
-    return { weeks, soilMoistureData };
-  };
-
   const options = {
     responsive: true,
     scales: {
+      x: {
+        type: "category",
+        title: {
+          display: true,
+          text: "Time", // Updated axis title
+        },
+      },
       y: {
         beginAtZero: true,
+        title: {
+          display: true,
+          text: "Soil Moisture (%)",
+        },
+      },
+    },
+    plugins: {
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: "x", // Allow panning along the x-axis
+        },
+        zoom: {
+          wheel: {
+            enabled: true, // Enable zooming with the mouse wheel
+          },
+          pinch: {
+            enabled: true, // Enable zooming on touch devices
+          },
+          mode: "x", // Zoom along the x-axis
+        },
       },
     },
   };

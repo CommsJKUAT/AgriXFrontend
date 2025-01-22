@@ -26,9 +26,9 @@ const SmokeSensor = () => {
 
         let safeLevel = 0, warningLevel = 0, dangerLevel = 0;
 
-        if (latestSmokeLevel < 10) {
+        if (latestSmokeLevel < 200) {
           safeLevel = 100;
-        } else if (latestSmokeLevel >= 10 && latestSmokeLevel < 20) {
+        } else if (latestSmokeLevel >= 200 && latestSmokeLevel < 400) {
           warningLevel = 100;
         } else {
           dangerLevel = 100;

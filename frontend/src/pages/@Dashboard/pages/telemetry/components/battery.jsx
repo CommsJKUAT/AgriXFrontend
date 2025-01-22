@@ -30,7 +30,7 @@ const BatteryGauge = () => {
 
   useEffect(() => {
     fetchBatteryLevel(); // Initial fetch
-    const intervalId = setInterval(fetchBatteryLevel, 5000000); // Periodic fetch every 5 seconds
+    const intervalId = setInterval(fetchBatteryLevel, 5000); // Periodic fetch every 5 seconds
     return () => {
       clearInterval(intervalId); // Clear the interval on component unmount
     };
@@ -74,7 +74,7 @@ const BatteryGauge = () => {
     },
   };
 
-  // Render loading text if there's an error, otherwise show the chart immediately
+ 
   if (error) return <div>Error: {error}</div>;
 
   return <ReactFC {...chartConfigs} />;
