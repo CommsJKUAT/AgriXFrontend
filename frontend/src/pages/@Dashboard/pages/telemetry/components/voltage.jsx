@@ -20,6 +20,7 @@ const VoltageGauge = () => {
         throw new Error("Failed to fetch data");
       }
       const data = await response.json();
+      console.log(data.voltage);
       setVoltage(parseFloat(data.voltage)); 
     } catch (error) {
       setError(error.message);
