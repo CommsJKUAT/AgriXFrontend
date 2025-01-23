@@ -7,7 +7,6 @@ import ReactFC from "react-fusioncharts";
 ReactFC.fcRoot(FusionCharts, Widgets, FusionTheme);
 
 const VoltageGauge = () => {
-  // Set default voltage value
   const [voltage, setVoltage] = useState(0);
   const [error, setError] = useState(null);
 
@@ -17,12 +16,13 @@ const VoltageGauge = () => {
         "https://agroxsat.onrender.com/backendapi/telemetry/"
       );
       if (!response.ok) {
-        throw new Error("Failed to fetch data");
+        throw new Error(`Failed to fetch data: ${response.statusText}`);
       }
       const data = await response.json();
       console.log(data.voltage);
       setVoltage(parseFloat(data.voltage)); 
     } catch (error) {
+      console.error('Error fetching voltage data:', error);
       setError(error.message);
     }
   };
@@ -44,7 +44,7 @@ const VoltageGauge = () => {
       chart: {
         caption: "Voltage Level",
         lowerlimit: "0",
-        upperlimit: "240", 
+        upperlimit: "12", 
         numbersuffix: " V",
         theme: "fusion",
         valuefontsize: "20",
@@ -54,9 +54,9 @@ const VoltageGauge = () => {
       },
       colorRange: {
         color: [
-          { minValue: "0", maxValue: "80", code: "#e44a00" },
-          { minValue: "80", maxValue: "160", code: "#f8bd19" },
-          { minValue: "160", maxValue: "240", code: "#6baa01" },
+          { minValue: "0", maxValue: "5", code: "#e44a00" },
+          { minValue: "5", maxValue: "9", code: "#f8bd19" },
+          { minValue: "9", maxValue: "12", code: "#6baa01" },
         ],
       },
       pointers: {
@@ -74,9 +74,9 @@ const VoltageGauge = () => {
     },
   };
 
-  if (error) return <div>Error: {error}</div>; // Show error message if there's an error
+  if (error) return <div>Error: {error}</div>; 
 
-  return <ReactFC {...chartConfigs} />; // Render the chart immediately with default voltage value
+  return <ReactFC {...chartConfigs} />;
 };
 
 export default VoltageGauge;

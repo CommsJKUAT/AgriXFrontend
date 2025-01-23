@@ -42,7 +42,7 @@ const CurrentGauge = () => {
       chart: {
         caption: "Current Level",
         lowerlimit: "0",
-        upperlimit: "100",
+        upperlimit: "5",
         numbersuffix: " A",
         theme: "fusion",
         showvalue: "1",
@@ -52,9 +52,9 @@ const CurrentGauge = () => {
       },
       colorRange: {
         color: [
-          { minValue: "0", maxValue: "30", code: "#62B58F" },
-          { minValue: "30", maxValue: "70", code: "#F8C53A" },
-          { minValue: "70", maxValue: "100", code: "#E44A00" },
+          { minValue: "0", maxValue: "1.5", code: "#62B58F" },
+          { minValue: "1.5", maxValue: "3", code: "#F8C53A" },
+          { minValue: "3", maxValue: "5", code: "#E44A00" },
         ],
       },
       dials: {
