@@ -39,7 +39,7 @@ const PressureGauge = () => {
         caption: "Pressure Gauge",
         lowerlimit: "0",
         upperlimit: "200",
-        numbersuffix: " Pa",
+        numbersuffix: " hPa",
         theme: "fusion",
         showvalue: "1",
         valuefontsize: "20",
