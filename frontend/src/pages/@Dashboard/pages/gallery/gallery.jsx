@@ -9,7 +9,7 @@ const Gallery = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/images/');  // Adjust URL as needed
+        const response = await fetch('https://agroxsat.onrender.com/backendapi/images/');  // Adjust URL as needed
         const data = await response.json();
         if (data && Array.isArray(data)) {
           // Convert base64 strings back to displayable images
