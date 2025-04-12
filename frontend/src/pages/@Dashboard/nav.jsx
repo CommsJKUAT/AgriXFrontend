@@ -68,21 +68,7 @@ const DashboardNav = () => {
               </span>
             </div>
             <ul className="py-2" aria-labelledby="user-menu-button">
-              <li>
-                <NavLink to="/dashboard" className="block px-4 py-2 text-sm text-white">
-                  Dashboard
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/settings" className="block px-4 py-2 text-sm text-white">
-                  Settings
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/earnings" className="block px-4 py-2 text-sm text-white">
-                  Earnings
-                </NavLink>
-              </li>
+              
               <li>
                 <button onClick={handleSignOut} className="block w-full text-left px-4 py-2 text-sm text-white">
                   Sign out
