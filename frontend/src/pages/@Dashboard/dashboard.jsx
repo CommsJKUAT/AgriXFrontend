@@ -170,12 +170,12 @@ const Dashboard = () => {
             <li>
               <button
                 onClick={handleLocationSubmit}
-                className="px-4 py-2 mt-2 text-white bg-blue-600 rounded-lg hover:bg-blue-800"
+                className="px-4 py-2 mt-2 ml-8 text-white bg-blue-600 rounded-lg hover:bg-blue-800"
               >
                 Set GS
               </button>
               {submitMessage && (
-                <p className="mt-2 text-sm">{submitMessage}</p>
+                <p className="mt-2 text-sm ml-8">{submitMessage}</p>
               )}
             </li>
           </ul>
