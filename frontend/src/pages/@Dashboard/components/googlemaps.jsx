@@ -29,7 +29,7 @@ const MapboxComponent = () => {
       try {
         const response = await axios.get("https://agroxsat.onrender.com/backendapi/satLocation/");
         const { coordinates } = response.data;
-        console.log("data",coordinates);
+        
         setAllCoordinates(coordinates); 
       } catch (error) {
         console.error("Error fetching all coordinates:", error);

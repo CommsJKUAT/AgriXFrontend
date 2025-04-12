@@ -8,17 +8,17 @@ import Temperature from "./components/temp";
 import VoltageGauge from "./components/voltage";
 
 const Telemetry = () => {
-  // Example pressure value; you can replace this with live data
+  
   const pressureValue = 120;
-  // Example IMU values; replace these with real data
+  
   const yawValue = 45;
   const pitchValue = -30;
   const rollValue = 10;
 
-  // Example temperature value; replace this with real-time data
+  
   const epsTemperature = 75;
 
-  // Example values; replace with actual data
+  
   const voltageValue = 220;
   const currentValue = 45;
 
@@ -54,8 +54,8 @@ const Telemetry = () => {
           <div className="col-span-3 text-center bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
             <div className="flex flex-row justify-center">
               <IMUGauge imuValue={yawValue} type="Yaw" />
-              <IMUGauge imuValue={pitchValue} type="Pitch" />
-              <IMUGauge imuValue={rollValue} type="Roll" />
+              
+             
             </div>
             <div className="p-5">
               <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">

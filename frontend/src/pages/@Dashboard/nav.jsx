@@ -11,8 +11,7 @@ const DashboardNav = () => {
   useEffect(() => {
     const storedUsername = localStorage.getItem('username') || '';
     const storedEmail = localStorage.getItem('email') || '';
-    console.log("Stored username:", storedUsername);
-    console.log("Stored email:", storedEmail);
+    
 
     setUsername(storedUsername);
     setEmail(storedEmail);

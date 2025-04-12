@@ -7,6 +7,9 @@ import ReactFC from "react-fusioncharts";
 ReactFC.fcRoot(FusionCharts, Widgets, FusionTheme);
 
 const IMUGauge = ({ type, imuValue }) => {
+  // Ensure value is within -180 to 180 range
+  const normalizedValue = ((imuValue % 360 + 540) % 360) - 180;
+
   const chartConfigs = {
     type: "angulargauge",
     width: "400",
@@ -26,19 +29,48 @@ const IMUGauge = ({ type, imuValue }) => {
         pivotradius: "10",
         pivotfillcolor: "#000000",
         gaugefillratio: "0,0,100,0",
+        baseFont: "Arial",
+        valueFontColor: "#000000",
+        tickValueDistance: "10",
+        majorTMNumber: "9", // Show more tick marks
+        minorTMNumber: "5", // Show minor tick marks
+        showGaugeBorder: "1",
+        gaugeInnerRadius: "75%",
+        showValue: "1",
+        placeValuesInside: "1",
       },
       colorRange: {
         color: [
-          { minValue: "-180", maxValue: "-90", code: "#E44A00" },
-          { minValue: "-90", maxValue: "90", code: "#62B58F" },
-          { minValue: "90", maxValue: "180", code: "#E44A00" },
+          { minValue: "-180", maxValue: "-90", code: "#E44A00", alpha: "25" },
+          { minValue: "-90", maxValue: "90", code: "#62B58F", alpha: "25" },
+          { minValue: "90", maxValue: "180", code: "#E44A00", alpha: "25" },
         ],
       },
       dials: {
         dial: [
           {
-            value: imuValue,
-            rearExtension: "5",
+            value: normalizedValue,
+            baseWidth: "8",
+            rearExtension: "15",
+            tooltext: `${type}: $value°`,
+          },
+        ],
+      },
+      annotations: {
+        groups: [
+          {
+            items: [
+              {
+                type: "text",
+                id: "text1",
+                text: `${normalizedValue.toFixed(1)}°`,
+                align: "center",
+                vAlign: "bottom",
+                fontSize: "20",
+                bold: "1",
+                y: "$gaugeCenterY - 40",
+              },
+            ],
           },
         ],
       },
@@ -65,10 +97,11 @@ const IMUDisplay = () => {
       }
       const data = await response.json();
 
+      // Ensure values are properly normalized
       setImuData({
-        roll: parseFloat(data.roll),
-        yaw: parseFloat(data.yaw),
-        pitch: parseFloat(data.pitch),
+        roll: Number(data.roll) || 0,
+        yaw: Number(data.yaw) || 0,
+        pitch: Number(data.pitch) || 0,
       });
     } catch (err) {
       setError(err.message);
@@ -77,11 +110,11 @@ const IMUDisplay = () => {
 
   useEffect(() => {
     fetchIMUData();
-    const intervalId = setInterval(fetchIMUData, 5000); // Fetch data every 5 seconds
+    const intervalId = setInterval(fetchIMUData, 5000); 
     return () => clearInterval(intervalId);
   }, []);
 
-  if (error) return <div>Error: {error}</div>; // If error, show error message
+  if (error) return <div>Error: {error}</div>; 
 
   return (
     <div style={{ display: "flex", justifyContent: "center", gap: "20px" }}>

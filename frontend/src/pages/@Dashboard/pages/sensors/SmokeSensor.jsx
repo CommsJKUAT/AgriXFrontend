@@ -1,72 +1,112 @@
 import React, { useState, useEffect } from "react";
-import { Doughnut } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import axios from "axios";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, RadialLinearScale } from 'chart.js';
+import dayjs from "dayjs";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
-  Legend,
-  RadialLinearScale  
+  Legend
 );
 
 const SmokeSensor = () => {
-  const [smokeData, setSmokeData] = useState([50, 50, 0]); // Default value
-  const [smokeLevel, setSmokeLevel] = useState(50); // Default smoke level
+  const [smokeLevels, setSmokeLevels] = useState([]);
+  const [timestamps, setTimestamps] = useState([]);
 
   useEffect(() => {
     const fetchSmokeData = async () => {
       try {
         const response = await axios.get("https://agroxsat.onrender.com/backendapi/payload/");
-        const latestSmokeLevel = response.data[response.data.length - 1].smoke_level;
-        setSmokeLevel(latestSmokeLevel);
-
-        let safeLevel = 0, warningLevel = 0, dangerLevel = 0;
-
-        if (latestSmokeLevel < 200) {
-          safeLevel = 100;
-        } else if (latestSmokeLevel >= 200 && latestSmokeLevel < 400) {
-          warningLevel = 100;
-        } else {
-          dangerLevel = 100;
-        }
-
-        setSmokeData([safeLevel, warningLevel, dangerLevel]);
+        const data = response.data;
+        const recentData = data.slice(-25);
+       
+        const levels = recentData.map((item) => item.smoke_level);
+        const times =recentData.map((item) =>
+                  dayjs(item.created_at).format("HH:mm")
+                );
+        
+        setSmokeLevels(levels);
+        setTimestamps(times);
       } catch (error) {
         console.error("Error fetching smoke level data:", error);
       }
     };
 
+    fetchSmokeData();
     const intervalId = setInterval(fetchSmokeData, 5000);
-
     return () => clearInterval(intervalId);
   }, []);
 
   const data = {
-    labels: ["Safe Level", "Warning Level", "Danger Level"],
+    labels: timestamps,
     datasets: [
       {
-        label: "Smoke Level Status",
-        data: smokeData,
-        backgroundColor: ["#4caf50", "#ffeb3b", "#f44336"],
-      },
-    ],
+        label: 'Smoke Level',
+        data: smokeLevels,
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1,
+        fill: false,
+        pointRadius: 3,
+        pointBackgroundColor: 'rgb(75, 192, 192)',
+      }
+    ]
   };
 
   const options = {
     responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Smoke Level Over Time'
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Smoke Level'
+        },
+        grid: {
+          color: 'rgba(0, 0, 0, 0.1)'
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Time'
+        },
+        grid: {
+          display: false
+        }
+      }
+    }
   };
 
   return (
     <div>
-      <h3>Smoke Level</h3>
+      <h3>Smoke Level Monitoring</h3>
       <div className="chart-container" style={{ width: "100%", height: "400px" }}>
-        <Doughnut id="smoke" data={data} options={options} />
+        <Line data={data} options={options} />
       </div>
-      <h4>Current Smoke Level: {smokeLevel}</h4>
+      <h4>Current Smoke Level: {smokeLevels[smokeLevels.length - 1] || 'N/A'}</h4>
     </div>
   );
 };
