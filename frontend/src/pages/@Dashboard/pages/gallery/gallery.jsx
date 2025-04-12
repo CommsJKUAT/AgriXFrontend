@@ -9,7 +9,7 @@ const Gallery = () => {
     
     const importImages = async () => {
       try {
-        const imageContext = import.meta.glob('/public/maize/*.{png,jpg,jpeg}');
+        const imageContext = import.meta.glob('/src/assets/maize/*.{png,jpg,jpeg}');
         const imagePromises = Object.entries(imageContext).map(async ([path, importFn]) => {
           const imageMod = await importFn();
           return {
