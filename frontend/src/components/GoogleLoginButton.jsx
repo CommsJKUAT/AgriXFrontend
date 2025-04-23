@@ -8,7 +8,7 @@ const GoogleLoginButton = () => {
 
   const handleGoogleSuccess = async (response) => {
     try {
-      console.log('Google token:', response);
+      
 
       const res = await fetch('https://agroxsat.onrender.com/backendapi/auth/google/', {
         method: 'POST',
@@ -22,7 +22,7 @@ const GoogleLoginButton = () => {
       });
 
       const data = await res.json();
-      console.log('Backend response:', data);
+      
 
       if (!res.ok) {
         throw new Error(data.error || 'Authentication failed');
