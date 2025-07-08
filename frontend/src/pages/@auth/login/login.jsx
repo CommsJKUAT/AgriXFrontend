@@ -100,7 +100,7 @@ const Login = () => {
   };
 
   return (
-    <section className="relative bg-olive 2xl:h-screen bg-hero-pattern bg-no-repeat bg-cover">
+    <section className="relative bg-olive min-h-screen bg-hero-pattern bg-no-repeat bg-cover bg-center">
       <Nav />
       <div className="px-8 md:px-0 pb-8 flex flex-col justify-center items-center h-full">
         <div className="w-full md:w-1/3 2xl:w-1/4">
