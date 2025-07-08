@@ -1,8 +1,36 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Nav from "../nav";
 import GoogleLoginButton from '../../../components/GoogleLoginButton';
+
+// ✅ Moved InputField out of Register to avoid input re-creation on every render
+const InputField = ({ label, id, type, placeholder, value, onChange }) => (
+  <div className="my-5">
+    <label htmlFor={id} className="block mb-2 text-sm font-medium text-white">
+      {label}
+    </label>
+    <div className="relative">
+      <input
+        type={type}
+        id={id}
+        value={value}
+        onChange={onChange}
+        className="text-white bg-black-olive text-sm rounded-lg focus:ring-black-olive focus:border-black-olive block w-full ps-2.5 p-3.5 placeholder-ash-gray"
+        placeholder={placeholder}
+        required
+      />
+    </div>
+  </div>
+);
+
+// Optional Divider component (unchanged)
+const Divider = () => (
+  <div className="flex items-center my-4 w-full max-w-md">
+    <div className="flex-1 border-t border-gray-300"></div>
+    <span className="px-4 text-gray-200">Or</span>
+    <div className="flex-1 border-t border-gray-300"></div>
+  </div>
+);
 
 function Register() {
   const navigate = useNavigate();
@@ -12,12 +40,13 @@ function Register() {
     password: "",
     confirmPassword: ""
   });
+
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [id]: value
     }));
@@ -65,33 +94,6 @@ function Register() {
     }
   };
 
-  const InputField = ({ label, id, type, placeholder, value }) => (
-    <div className="my-5">
-      <label htmlFor={id} className="block mb-2 text-sm font-medium text-white">
-        {label}
-      </label>
-      <div className="relative">
-        <input
-          type={type}
-          id={id}
-          value={value}
-          onChange={handleInputChange}
-          className="text-white bg-black-olive text-sm rounded-lg focus:ring-black-olive focus:border-black-olive block w-full ps-2.5 p-3.5 placeholder-ash-gray"
-          placeholder={placeholder}
-          required
-        />
-      </div>
-    </div>
-  );
-
-  const Divider = () => (
-    <div className="flex items-center my-4 w-full max-w-md">
-      <div className="flex-1 border-t border-gray-300"></div>
-      <span className="px-4 text-gray-200">Or</span>
-      <div className="flex-1 border-t border-gray-300"></div>
-    </div>
-  );
-
   return (
     <section className="relative bg-olive min-h-screen bg-hero-pattern bg-no-repeat bg-cover">
       <Nav />
@@ -109,6 +111,7 @@ function Register() {
             type="text"
             placeholder="John Doe"
             value={formData.username}
+            onChange={handleInputChange}
           />
           <InputField
             label="Your Email"
@@ -116,6 +119,7 @@ function Register() {
             type="email"
             placeholder="johndoe@gmail.com"
             value={formData.email}
+            onChange={handleInputChange}
           />
           <InputField
             label="Your password"
@@ -123,6 +127,7 @@ function Register() {
             type="password"
             placeholder="•••••••••"
             value={formData.password}
+            onChange={handleInputChange}
           />
           <InputField
             label="Repeat password"
@@ -130,6 +135,7 @@ function Register() {
             type="password"
             placeholder="•••••••••"
             value={formData.confirmPassword}
+            onChange={handleInputChange}
           />
 
           {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
@@ -166,7 +172,7 @@ function Register() {
                 <span>Please wait...</span>
               </div>
             ) : (
-              'Sign Up'
+              "Sign Up"
             )}
           </button>
 
@@ -189,3 +195,4 @@ function Register() {
 }
 
 export default Register;
+
